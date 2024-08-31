@@ -137,3 +137,5 @@ encrypted/
 
 # Ignore decrypted files directory
 decrypted/
+
+package-lock.json
