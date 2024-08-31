@@ -20,7 +20,7 @@ This project provides a simple file encryption and decryption system using Node.
 
     ```bash
     git clone https://github.com/tantaihaha4487/file-encryption
-    cd yourrepository
+    file-encryption
     ```
 
 2. Install dependencies:
