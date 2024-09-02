@@ -6,7 +6,6 @@ This project provides a simple file encryption and decryption system using Node.
 
 - **Encryption**: Encrypts files and saves them with a `.enc` extension.
 - **Decryption**: Decrypts previously encrypted files.
-- **Key Management**: Generates and manages cryptographic keys using a password and salt.
 
 
 ## Prerequisites
@@ -20,7 +19,7 @@ This project provides a simple file encryption and decryption system using Node.
 
     ```bash
     git clone https://github.com/tantaihaha4487/file-encryption
-    file-encryption
+    cd file-encryption
     ```
 
 2. Install dependencies:
@@ -37,68 +36,56 @@ This project provides a simple file encryption and decryption system using Node.
 
    Replace `your-secret-password` with your own secret password that will be used to generate encryption keys.
 
-4. Create directories for your files:
-
-    - `files/`: Contains files to be encrypted.
-    - `encrypted/`: Stores encrypted files.
-    - `decrypted/`: Stores decrypted files.
-    - `key/`: Stores key, salt, and iv files.
-
-    Make sure the `files/` directory contains a file named `download.mp4` for the example.
-
 ## Usage
 
-### 1. Main Script (`main.js`)
+### Example Script (`main.js`)
+  This code will encrypt download.mp4 file from `files/download.mp4` encrypt to `encrypted` folder.
+  <br>
+  Then use return path from `encrypt()` and use function `decrypt()` decrypt `download.mp4` back to `decrypted` folder.  
 
-This script demonstrates how to use the encryption and decryption functions to process multiple files:
 
 ```javascript
+/**
+ * This is example way to use :)
+ */
+
 const path = require('path');
-require('dotenv').config();
-const { createKey } = require("./utils/keyManager");
 const { encrypt } = require('./utils/encrypt');
 const { decrypt } = require('./utils/decrypt');
-const { KEY } = process.env;
 
+
+/**
+ * Difine path to key directory.
+ */
 const keyDir = path.join(__dirname, 'key');
 
-// List of files to be encrypted
-const filesToEncrypt = [
-    'files/download.mp4',
-];
-
-// Create the encryption key
-createKey(KEY, keyDir);
-
-// Function to handle encryption and decryption
-async function processFiles() {
-    try {
-        // Encrypt all files concurrently
-        const encryptedFiles = await Promise.all(
-            filesToEncrypt.map(filePath => 
-                encrypt(filePath, keyDir, 'encrypted')
-            )
-        );
-
-        // Log encryption success
-        encryptedFiles.forEach(message => console.log(message));
-
-        // Decrypt all files concurrently
-        const decryptedFiles = await Promise.all(
-            filesToEncrypt.map(filePath => {
-                const encryptedFilePath = path.join('encrypted', `${path.basename(filePath)}.enc`);
-                return decrypt(encryptedFilePath, keyDir, 'decrypted');
+/**
+ * Encrypt a single file.
+ * @param {string} inputFile Path to the file that will be encrypted.
+ * @param {string} keyDir Directory containing key and iv files.
+ * @param {string} outputDir Directory to save the encrypted file.
+ */
+encrypt('./files/download.mp4', keyDir, 'encrypted')
+    .then((file) => {
+        console.log(`encrypt succuessfully: ${file}`);
+          /**
+          * Start decrypt file with previous a encrypted file.
+          * @param {string} inputFile Path to the file that will be decrypted.
+          * @param {string} keyDir Directory containing key and iv files.
+          * @param {string} outputDir Directory to save the decrypted file.
+          */
+        decrypt(file, keyDir, 'output')
+            .then((file) => {
+                console.log(`decrypted succuessfully: ${file}`)
             })
-        );
-
-        // Log decryption success
-        decryptedFiles.forEach(message => console.log(message));
-
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-// Start processing files
-processFiles();
+            .catch((err) => {
+                console.log(err);
+            });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 ```
+
+# Developer
+* [@tantaihaha4487](https://github.com/tantaihaha4487)
