@@ -7,7 +7,7 @@ const crypto = require('crypto');
  * @param {string} inputFile Path to the file that will be decrypted.
  * @param {string} keyDir Directory containing key and iv files.
  * @param {string} outputDir Directory to save the decrypted file.
- * @returns {Promise<string>} A promise that resolves with a success message or rejects with an error message.
+ * @returns {Promise<string>} A promise that resolves with a success message will be complete decrypted file directory or rejects with an error message.
  */
 function decrypt(inputFile, keyDir, outputDir) {
     return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ function decrypt(inputFile, keyDir, outputDir) {
         input.pipe(decipher).pipe(output);
 
         output.on('finish', () => {
-            resolve(`File decrypted successfully: ${outputFile}`);
+            resolve(`${outputFile}`);
         });
 
         input.on('error', (err) => {

@@ -1,6 +1,10 @@
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { createKey } = require('./keyManager');
+require('dotenv').config();
+
+const { KEY } = process.env;
 
 /**
  * Encrypt file with key file.
@@ -8,7 +12,7 @@ const path = require('path');
  * @param {string} inputFile Path to the file that will be encrypted.
  * @param {string} keyDir Directory containing key and iv files.
  * @param {string} outputDir Directory to save the encrypted file.
- * @returns {Promise<string>} A promise that resolves with a success message or rejects with an error message.
+ * @returns {Promise<string>} A promise that resolves with a success message will be complete encrypted file directory or rejects with an error message.
  */
 function encrypt(inputFile, keyDir, outputDir) {
     return new Promise((resolve, reject) => {
@@ -19,6 +23,11 @@ function encrypt(inputFile, keyDir, outputDir) {
 
         const keyFile = path.join(keyDir, 'key.bin');
         const ivFile = path.join(keyDir, 'iv.bin');
+
+        // key doesn't exits.
+        if (!fs.existsSync(keyDir) || !fs.existsSync(keyFile) || !fs.existsSync(ivFile)) {
+            createKey(KEY, keyDir);
+        }
 
         const key = fs.readFileSync(keyFile);
         const iv = fs.readFileSync(ivFile);
@@ -34,7 +43,7 @@ function encrypt(inputFile, keyDir, outputDir) {
         output.on('finish', () => {
             try {
                 fs.unlinkSync(inputFile); // Delete the original file after encryption.
-                resolve(`File encrypted successfully: ${outputFile}`);
+                resolve(`${outputFile}`);
             } catch (err) {
                 reject(`Error deleting original file: ${err.message}`);
             }
